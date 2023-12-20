@@ -1,4 +1,5 @@
-from models.contact import Contact, AddressBook
+from models.Contact import Contact
+from models.AddressBook import AddressBook
 
 class ContactService:
     def __init__(self, address_book):
@@ -7,7 +8,7 @@ class ContactService:
     def add_contact(self, name, address=None, phones=None, emails=None, birthday=None):
         contact = Contact(name)
         if address:
-            contact.address = AddressBook(address)
+            contact.add_address(address)
         if phones:
             for phone in phones:
                 contact.add_phone(phone)

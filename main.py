@@ -1,6 +1,13 @@
-from models.contact import AddressBook, Contact, Name, Phone, Email, Birthday, Address
+from models.AddressBook import AddressBook
+from models.Contact import Contact
+from models.Name import Name
+from models.Phone import Phone
+from models.Email import Email
+from models.Birthday import Birthday
+from models.Address import Address
 from services.contact_service import ContactService
-from models.note import Note, NoteBook
+from models.Note import Note
+from models.NoteBook import NoteBook
 from services.note_service import NoteService
 from utils.validation_utils import ValidationUtils
 
@@ -85,7 +92,7 @@ def main():
             print(f"Contact {old_name} updated.")
 
         elif choice == "6":
-            print(contact_service.show_contacts())
+            contact_service.show_contacts()
 
         elif choice == "7":
             days = int(input("Enter the number of days for upcoming birthdays: "))
