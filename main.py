@@ -38,6 +38,7 @@ def main():
 
         if choice == "1":
             name = input("Enter name: ")
+            # Do validation after entering the field, if it's wrong, ask to enter again
             address = input("Enter address (optional): ")
             phones = input("Enter phones (comma-separated): ").split(",")
             emails = input("Enter emails (comma-separated): ").split(",")
