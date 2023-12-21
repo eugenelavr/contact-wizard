@@ -1,7 +1,7 @@
 from collections import UserDict
 from datetime import datetime
 from models.Contact import Contact
-from utils.validation_utils import ValidationUtils
+from utils.ValidationUtils import ValidationUtils
 
 class AddressBook(UserDict):
     

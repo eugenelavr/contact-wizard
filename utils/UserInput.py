@@ -1,4 +1,4 @@
-from utils.validation_utils import ValidationUtils
+from utils.ValidationUtils import ValidationUtils
 
 
 def contact_input(add=True):

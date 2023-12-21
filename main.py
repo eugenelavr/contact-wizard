@@ -1,16 +1,11 @@
 from models.AddressBook import AddressBook
 from models.Contact import Contact
-from models.Name import Name
-from models.Phone import Phone
-from models.Email import Email
-from models.Birthday import Birthday
-from models.Address import Address
-from services.contact_service import ContactService
+from services.ContactService import ContactService
 from models.Note import Note
 from models.NoteBook import NoteBook
-from services.note_service import NoteService
-from utils.validation_utils import ValidationUtils
-from utils.user_input import contact_input
+from services.NoteService import NoteService
+from utils.ValidationUtils import ValidationUtils
+from utils.UserInput import contact_input
 
 
 def main():
@@ -19,7 +14,6 @@ def main():
     note_book = NoteBook()
     note_service = NoteService(note_book)
     
-    # Placeholder. Main method to be discussed.
     while True:
         print("\nOptions:")
         print("1. Add Contact")
@@ -28,9 +22,7 @@ def main():
         print("4. Search Contacts")
         print("5. Edit Contact")
         print("6. Show Contacts")
-
         print("7. Show Upcoming Birthdays")
-
         print("8. Add Note")
         print("9. Search Notes")
         print("10. Edit Note")
