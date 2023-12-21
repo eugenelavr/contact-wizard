@@ -1,5 +1,4 @@
-from models.Contact import Contact
-from models.AddressBook import AddressBook
+from models.Contact import Contact, AddressBook
 
 class ContactService:
     def __init__(self, address_book : AddressBook):
@@ -24,9 +23,6 @@ class ContactService:
 
     def delete_contact(self, name):
         self.address_book.delete_contact(name)
-
-    # def search_contacts(self, query):
-    #     return self.address_book.search_contacts(query)
 
     def edit_contact(self, old_name, new_contact):
         self.address_book.edit_contact(old_name, new_contact)
