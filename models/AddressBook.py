@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime
 from models.Contact import Contact
+from utils.validation_utils import ValidationUtils
 
 class AddressBook(UserDict):
     
@@ -10,24 +11,39 @@ class AddressBook(UserDict):
         else:
             self.data[contact.name.value.lower()] = contact
             print("Contact added")
-    
-    # OLD
-    # def add_contact(self, contact):
-    #     if contact.name.value in self.data:
-    #         raise ValueError(f"Contact with name {contact.name.value} already exists in the address book")
-    #     self.data[contact.name.value] = contact
 
-    def find_contact(self, name):
-        return self.data.get(name)
+    def find_contact(self, value):
+        contacts = set()
+        if ValidationUtils.validate_phone(value):
+            for contact in self.data.values():
+                for phone in contact.phones:
+                    if phone.value == value:
+                        contacts.add(contact)
+        elif ValidationUtils.validate_email(value):
+            for contact in self.data.values():
+                if contact.email.value == value:
+                    contacts.add(contact)
+        elif ValidationUtils.validate_birthday(value):
+            for contact in self.data.values():
+                if contact.birthday.value == datetime.strptime(value, "%d.%m.%Y").date():
+                    contacts.add(contact)
+        else:
+            for contact in self.data.values():
+                if contact.address.value == value:
+                    contacts.add(contact)
+            contact_by_name = self.data.get(value, None)
+            if contact:
+                contacts.add(contact_by_name)
+        return contacts
 
     def delete_contact(self, name):
         # Placeholder delete_contact. Rewrite test code below
         if name in self.data:
             del self.data[name]
 
-    # def search_contacts(self, query):
-    #     # Placeholder search_contacts. Rewrite test code below
-    #     return [contact for contact in self.data.values() if query.lower() in contact.name.value.lower()]
+    def search_contacts(self, query):
+        # Placeholder search_contacts. Rewrite test code below
+        return [contact for contact in self.data.values() if query.lower() in contact.name.value.lower()]
 
     def edit_contact(self, old_name, new_contact):
         # Placeholder edit_contact. Rewrite test code below
@@ -35,12 +51,12 @@ class AddressBook(UserDict):
             del self.data[old_name]
             self.add_contact(new_contact)
         else:
-            raise ValueError(f"Contact with name {old_name} not found in the address book")
+            print(f"Contact {old_name} was not found")
 
     def show_contacts(self):
         if self.data:
-            result = "All contacts:\n"
-            for contact in self.data.values():
+            sorted_dict = dict(sorted(self.data.items()))
+            for contact in sorted_dict.values():
                 print(contact)
             #     result += f"{contact}\n"
             # return result.strip()

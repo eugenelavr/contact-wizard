@@ -8,3 +8,8 @@ class ValidationUtils:
     def validate_email(email):
         # Placeholder for email validation
         return True
+    
+    @staticmethod
+    def validate_birthday(birthday):
+        # Placeholder for email validation
+        return True

@@ -1,3 +1,4 @@
+from datetime import datetime
 from models.Name import Name
 from models.Phone import Phone
 from models.Email import Email
@@ -22,12 +23,15 @@ class Contact:
         self.phones.append(Phone(phone))
 
     def edit_phone(self, old_phone, new_phone):
-        pass
+        for index, phone in enumerate(self.phones):
+            if phone.value == old_phone:
+                self.phones.remove(phone)
+                self.phones.insert(index, Phone(new_phone))
 
     def remove_phone(self, phone):
-        pass
-        # if phone in self.phones:
-        #     self.phones.remove(phone)
+        for phone_ in self.phones:
+            if phone_.value == phone:
+                self.phones.remove(phone_)
     
     # Email actions
     def add_email(self, email):
@@ -35,15 +39,12 @@ class Contact:
             print("Email already exists")
         else:
             self.email = Email(email)
-        # self.emails.append(Email(email))
     
     def edit_email(self, email):
-        pass
+        self.email = Email(email)
 
     def remove_email(self, email):
         self.email = None
-        # if email in self.emails:
-        #     self.emails.remove(email)
     
     # Address actions
     def add_address(self, address):
@@ -53,7 +54,7 @@ class Contact:
             self.address = Address(address)
     
     def edit_address(self, address):
-        pass
+        self.address = Address(address)
 
     def remove_address(self, address):
         self.address = None
@@ -67,15 +68,17 @@ class Contact:
             self.birthday = Birthday(birthday)
 
     def edit_birthday(self, birthday):
-        pass
+        self.birthday = Birthday(birthday)
 
     def remove_birthday(self, birthday):
-        pass
+        self.birthday = None
 
     def __str__(self):
-        result = f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, email: {self.email.value}"
+        result = f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+        if self.email:
+            result += f", email: {self.email.value}"
         if self.address:
             result += f", address: {self.address.value}"
         if self.birthday:
-            result += f", birthday: {self.birthday.value}"
+            result += f", birthday: {datetime.strftime(self.birthday.value, "%d.%m.%Y")}"
         return result
