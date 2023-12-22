@@ -34,7 +34,7 @@ def main():
     note_service = NoteService(note_book)
     
     while True:
-        choice = input("Enter your choice № or command: ")
+        choice = input("Enter your choice № of command or + to show all commands: ")
 
         if choice == "1" or choice.lower().startswith("add contact"): 
             name = input("Enter name: ").strip()
@@ -135,8 +135,9 @@ def main():
                 print("No upcoming birthdays.")
 
         elif choice == "7" or choice.lower().startswith("add note"):
+            note_name = input("Enter note name: ")
             note_text = input("Enter note text: ")
-            note_service.add_note(note_text)
+            note_service.add_note(note_name, note_text)
             print("Note added.")
 
         elif choice == "8" or choice.lower().startswith("search notes"):
@@ -150,16 +151,16 @@ def main():
                 print("No notes found.")
 
         elif choice == "9" or choice.lower().startswith("edit note"):
-            old_text = input("Enter the text of the note to edit: ")
+            note_name = input("Enter the name of the note to edit: ")
             new_text = input("Enter new note text: ")
-            new_note = Note(new_text)
-            note_service.edit_note(old_text, new_note)
-            print(f"Note '{old_text}' updated.")
+            new_note = Note(note_name, new_text)
+            note_service.edit_note(note_name, new_note)
+            print(f"Note '{note_name}' updated.")
 
         elif choice == "10" or choice.lower().startswith("delete note"):
-            note_text = input("Enter the text of the note to delete: ")
-            note_service.delete_note(note_text)
-            print(f"Note '{note_text}' deleted.")
+            note_name = input("Enter the name of the note to delete: ")
+            note_service.delete_note(note_name)
+            print(f"Note '{note_name}' deleted.")
 
         elif choice == "11" or choice.lower().startswith("show notes"):
             print(note_service.show_notes())
@@ -167,6 +168,9 @@ def main():
         elif choice == "0" or choice.lower().startswith("exit"):
             print("Goodbye!")
             break
+
+        elif choice == "+":
+            show_menu()
 
         else:
             print("Invalid choice. Please try again.")
