@@ -41,42 +41,35 @@ def main():
         choice = input("Enter your choice: ")
 
         if choice == "1": # add cont
-            contact_service.add_contact(**contact_input())
-            # name = input("Enter name: ").strip()
-            # while not name:
-            #     name = input("Name is mandatory\nEnter name: ").strip()
-
-            # # Do validation after entering the field, if it's wrong, ask to enter again
-            # phones = input("Enter phones (comma-separated): ").strip().split(",")
-            # while not ValidationUtils.validate_phone(phones):
-            #     phones = input("Enter phones (comma-separated, optional): ").strip().split(",")
-            
-            # email = input("Enter email (optional): ").strip()
-            # while not ValidationUtils.validate_email(email):
-            #     email = input("Enter email (optional): ").strip()
-            
-            # address = input("Enter address (optional): ").strip()
-            
-            # birthday = input("Enter birthday (DD.MM.YYYY, optional): ").strip()
-            # while not ValidationUtils.validate_birthday(birthday):
-            #     birthday = input("Enter birthday (DD.MM.YYYY, optional): ").strip()
-            
-            # contact_service.add_contact(name, address, phones, email, birthday)
+            name = input("Enter name: ").strip()
+            while not name:
+                name = input("Name is mandatory\nEnter name: ").strip()
+            contact = contact_book.get(name.lower(), None)
+            if not contact:
+                contact_service.add_contact(**contact_input(name = name))
+            else:
+                print(f"Contact with name {name} already exists")
 
         elif choice == "2": # find cont
-            value = input("Enter value: ").strip()
-            contacts = contact_service.find_contact(value)
-            if contacts:
-                print("Contact found: \n")
-                for contact in contacts:
-                    print(contact)
+            if contact_book:
+                value = input("Enter value: ").strip()
+                contacts = contact_service.find_contact(value)
+                if contacts:
+                    print("Contact found: \n")
+                    for contact in contacts:
+                        print(contact)
+                else:
+                    print(f"Contact not found")
             else:
-                print(f"Contact not found")
+                print("The book is empty")
 
         elif choice == "3":
-            name = input("Enter name: ")
-            contact_service.delete_contact(name)
-            print(f"Contact {name} deleted.")
+            if contact_book:
+                name = input("Enter name: ")
+                contact_service.delete_contact(name)
+                print(f"Contact {name} deleted.")
+            else:
+                print("The book is empty")
 
         elif choice == "4":
             query = input("Enter search query: ")
@@ -89,67 +82,28 @@ def main():
                 print("No contacts found.")
 
         elif choice == "5":
-            old_name = input("Enter the name of the contact to edit: ").strip()
-            while not old_name:
-                old_name = input("Name is mandatory\nEnter the name of the contact to edit: ").strip()
-            
-            new_name = input("Enter new name: ").strip()
-            while not new_name:
-                new_name = input("Name is mandatory\nEnter new name: ").strip()
-            
-            new_phones = input("Enter new phones (comma-separated): ").strip().split(",")
-            while not ValidationUtils.validate_phone(new_phones):
-                new_phones = input("Enter new phones (comma-separated): ").strip().split(",")
-            
-            new_email = input("Enter new email: ").strip()
-            while not ValidationUtils.validate_email(new_email):
-                new_email = input("Enter new email: ").strip()
-            
-            new_address = input("Enter new address: ").strip()
-            
-            new_birthday = input("Enter new birthday (DD.MM.YYYY): ").strip()
-            while not ValidationUtils.validate_birthday(new_birthday):
-                new_birthday = input("Enter new birthday (DD.MM.YYYY): ").strip()
-
-            if not new_name:
-                old_contact = contact_book.get(old_name.lower(), None)
-                if old_contact:
-                    if new_address:
-                        old_contact.edit_address(new_address)
-                    if new_phones:
-                        for phone in new_phones:
-                            old_contact.add_phone(phone)
-                    if new_email:
-                        old_contact.edit_email(new_email)
-                    if new_birthday:
-                        old_contact.edit_birthday(new_birthday)
+            if contact_book:
+                old_name = input("Enter the name of the contact to edit: ").strip()
+                while not old_name:
+                    old_name = input("Name is mandatory\nEnter the name of the contact to edit: ").strip()
+                contact = contact_book.get(old_name.lower(), None)
+                if contact:
+                    contact_service.edit_contact(contact, **contact_input(add=False))
+                else:
+                    print("Contact not found")
             else:
-                new_contact = Contact(new_name)
-                if new_address:
-                    new_contact.add_address(new_address)
-                if new_phones:
-                    for phone in new_phones:
-                        new_contact.add_phone(phone)
-                if new_email:
-                    new_contact.add_email(new_email)
-                if new_birthday:
-                    new_contact.add_birthday(new_birthday)
-
-            contact_service.edit_contact(old_name, new_contact)
-            print(f"Contact {old_name} updated")
+                print("The book is empty")
 
         elif choice == "6":
-            contact_service.show_contacts()
+            if contact_book:
+                contact_service.show_contacts()
+            else:
+                print("The book is empty")
+            
 
         elif choice == "7":
             days = int(input("Enter the number of days for upcoming birthdays: "))
-            upcoming_birthdays = contact_service.show_upcoming_birthdays(days)
-            if upcoming_birthdays:
-                print("Upcoming birthdays:")
-                for contact in upcoming_birthdays:
-                    print(contact)
-            else:
-                print("No upcoming birthdays.")
+            contact_service.show_upcoming_birthdays(days)
 
         elif choice == "8":
             note_text = input("Enter note text: ")
