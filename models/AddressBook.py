@@ -46,8 +46,8 @@ class AddressBook(UserDict):
 
     def edit_contact(self, old_name, new_contact):
         # Placeholder edit_contact. Rewrite test code below
-        if old_name in self.data:
-            del self.data[old_name]
+        if old_name.lower() in self.data:
+            del self.data[old_name.lower()]
             self.add_contact(new_contact)
         else:
             print(f"Contact {old_name} was not found")

@@ -57,7 +57,7 @@ class ContactService:
                 else:
                     new_contact.add_phone(phone)
         
-        if phones[0] == '-':
+        if phones and phones[0] == '-':
             new_contact.remove_all_phones() 
         
         if email and email != '-':
@@ -72,9 +72,8 @@ class ContactService:
         
         if birthday and birthday != '-':
             new_contact.edit_birthday(birthday)
-        else:
+        if birthday == '-':
             new_contact.remove_birthday()
-        
         
         if name:
             self.address_book.edit_contact(contact.name.value, new_contact)

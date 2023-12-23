@@ -19,16 +19,16 @@ def contact_input(add=True, name=None):
     if not add:
         print(explanation)
 
-    phones = input("Enter phones (comma-separated): ").strip().split(',')
+    phones = list(filter(None, input("Enter phones (comma-separated): ").strip().split(',')))
     if add:
         if not ValidationUtils.validate_phone(phones):
-            phones = input("Enter phones (comma-separated, optional): ").strip().split(",")
+            phones = list(filter(None, input("Enter phones (comma-separated): ").strip().split(',')))
     else:
         if phones and phones != '-':
             for phone in phones:
                 del_edit_phones = list(filter(None, re.split(r'[- ]|del', phone)))
                 if not ValidationUtils.validate_phone(del_edit_phones):
-                    phones = input("Enter phones (comma-separated, optional): ").strip().split(",")
+                    phones = list(filter(None, input("Enter phones (comma-separated): ").strip().split(',')))
 
     
     email = input("Enter email (optional): ").strip()

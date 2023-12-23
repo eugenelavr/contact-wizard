@@ -75,7 +75,7 @@ class Contact:
             print("Birthday already exists")
         else:
             if isinstance(birthday, date):
-                self.birthday = birthday
+                self.birthday = Birthday(datetime.strftime(birthday, "%d.%m.%Y"))
             else:
                 self.birthday = Birthday(birthday)
 
