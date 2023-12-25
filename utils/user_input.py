@@ -1,4 +1,4 @@
-from utils.validation_utils import ValidationUtils
+from utils.ValidationUtils import ValidationUtils
 import re
 
 
@@ -6,8 +6,8 @@ def contact_input(add=True, name=None):
 
     if not add:
         name = input("Enter name: ").strip()
-        while not name and add:
-            name = input("Name is mandatory\nEnter name: ").strip()
+    while not name and add:
+        name = input("Name is mandatory\nEnter name: ").strip()
     
     if not add:
         print(" * Enter '-' to delete old data" )
@@ -21,13 +21,13 @@ def contact_input(add=True, name=None):
 
     phones = list(filter(None, input("Enter phones (comma-separated): ").strip().split(',')))
     if add:
-        if not ValidationUtils.validate_phone(phones):
+        if not ValidationUtils.validate_phone_list(phones):
             phones = list(filter(None, input("Enter phones (comma-separated): ").strip().split(',')))
     else:
         if phones and phones != '-':
             for phone in phones:
                 del_edit_phones = list(filter(None, re.split(r'[- ]|del', phone)))
-                if not ValidationUtils.validate_phone(del_edit_phones):
+                if not ValidationUtils.validate_phone_list(del_edit_phones):
                     phones = list(filter(None, input("Enter phones (comma-separated): ").strip().split(',')))
 
     
@@ -42,3 +42,17 @@ def contact_input(add=True, name=None):
         birthday = input("Enter birthday (DD.MM.YYYY, optional): ").strip()
     
     return {"name" : name, "phones" : phones, "email" : email, "address" : address, "birthday" : birthday}
+
+def note_input(add=True):
+
+    title = input("Enter title: ").strip()
+    while not title and add:
+        title = input("Title is mandatory\nEnter title: ").strip()
+    
+    text = input("Enter text: ").strip()
+    while not text and add:
+        text = input("Text is mandatory\nEnter text: ").strip()
+    
+    tags = list(filter(None, input("Enter tags (comma-separated): ").strip().split(',')))
+
+    return {"title" : title, "text" : text, "tags" : tags}

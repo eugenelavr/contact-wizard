@@ -1,7 +1,7 @@
 from collections import UserDict
 from datetime import datetime
 from models.Contact import Contact
-from utils.validation_utils import ValidationUtils
+from utils.ValidationUtils import ValidationUtils
 
 class AddressBook(UserDict):
     
@@ -11,7 +11,7 @@ class AddressBook(UserDict):
 
     def find_contact(self, value):
         contacts = set()
-        if ValidationUtils.validate_phone(value):
+        if ValidationUtils.validate_phone_list([value]):
             for contact in self.data.values():
                 for phone in contact.phones:
                     if phone.value == value:
@@ -25,12 +25,12 @@ class AddressBook(UserDict):
                 if contact.birthday.value == datetime.strptime(value, "%d.%m.%Y").date():
                     contacts.add(contact)
         else:
-            for contact in self.data.values():
-                if contact.address.value == value:
-                    contacts.add(contact)
             contact_by_name = self.data.get(value, None)
             if contact:
                 contacts.add(contact_by_name)
+            for contact in self.data.values():
+                if contact.address and contact.address.value == value:
+                    contacts.add(contact)
         return contacts
 
     def delete_contact(self, name):

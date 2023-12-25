@@ -3,6 +3,10 @@
         {
             "name": "contact-wizard",
             "path": "."
+        },
+        {
+            "name": "Contact-bot",
+            "path": "../Contact-bot"
         }
     ]
 }
