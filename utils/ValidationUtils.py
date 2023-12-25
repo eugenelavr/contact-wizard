@@ -6,7 +6,7 @@ class ValidationUtils:
     def validate_phone_list(phone_list):
         for i, phone in enumerate(phone_list):
             if phone_list[i] == "":
-                print("User without phone.")
+                #print("User without phone.")
                 return True
             # Remove spaces from each phone number
             phone_list[i] = phone.replace(" ", "")
@@ -15,13 +15,13 @@ class ValidationUtils:
               print(f"Invalid phone: {phone_list[i]}. Please enter a 10-digit number.")
               return False
 
-        print("All phones are valid.")
+        #print("All phones are valid.")
         return True
 
     @staticmethod
     def validate_email(email):
         if email == "":
-            print("User without email.")
+            #print("User without email.")
             return True
         # Define a regular expression pattern for a basic email format
         pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -36,7 +36,7 @@ class ValidationUtils:
     @staticmethod
     def validate_birthday(birthday):
         if birthday == "":
-            print("User birthday empty.")
+            #print("User birthday empty.")
             return True
         try:
             # Parse the input string into a datetime object

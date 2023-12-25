@@ -1,4 +1,4 @@
-from models.Note import Note, NoteBook
+from models.note import Note, NoteBook
 
 class NoteService:
     def __init__(self, note_book):

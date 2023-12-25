@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
-from models.Field import Field
+from models.field import Field
 from collections import UserDict
 
 class Name(Field):
-    pass
+    def __init__(self, value):
+        super().__init__(value)
 
 class Phone(Field):
     def __init__(self, value):
@@ -15,22 +16,32 @@ class Email(Field):
         
 class Birthday(Field):
     def __init__(self, value):
-        try:
-            datetime.strptime(value, '%d.%m.%Y')
-        except ValueError:
-            print("Invalid birthday format. Please use DD.MM.YYYY.")
+        self.__value = value
         super().__init__(value)
+    
+    @property
+    def value(self):
+        return self.__value
+    
+    @value.setter
+    def value(self, value):
+        self.__value = datetime.strptime(value, "%d.%m.%Y").date()
 
 class Address(Field):
-    pass
+    def __init__(self, value):
+        super().__init__(value)
     
 class Contact:
     def __init__(self, name):
-        self.name = Name(name)
+        self.__name = Name(name)
         self.address = None
         self.phones = []
-        self.emails = []
+        self.email = None
         self.birthday = None
+    
+    @property
+    def name(self):
+        return self.__name
     
     def add_phone(self, phone):
         if phone not in self.phones:
@@ -50,17 +61,17 @@ class Contact:
             self.phones.remove(phone)
     
     def add_email(self, email):
-        if email not in self.emails:
-            self.emails.append(Email(email))
-        else:
+        if self.email:
             print("Email already exists")
+        else:
+            if email:
+                self.email = Email(email)
     
     def edit_email(self, email):
         self.email = Email(email)
 
-    def remove_email(self, email):
-        if email in self.emails:
-            self.emails.remove(email)
+    def remove_email(self):
+        self.email = None
     
     def add_address(self, address):
         if address is not None:
@@ -84,11 +95,13 @@ class Contact:
         self.birthday = None
 
     def __str__(self):
-        result = f"Contact name: {self.name.value}, phones: {'; '.join(str(p) for p in self.phones)}, emails: {'; '.join(str(e) for e in self.emails)}"
+        result = f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+        if self.email:
+            result += f", email: {self.email.value}"
         if self.address:
             result += f", address: {self.address.value}"
         if self.birthday:
-            result += f", birthday: {self.birthday}"
+            result += f", birthday: {datetime.strftime(self.birthday.value, "%d.%m.%Y")}"
         return result
     
 class AddressBook(UserDict):
@@ -109,7 +122,7 @@ class AddressBook(UserDict):
                 match = True
             if record.address and keyword.lower() in record.address.value.lower():
                 match = True
-            if record.emails and any(email.value.lower() == keyword.lower() for email in record.emails):
+            if record.email and any(email.value.lower() == keyword.lower() for email in record.email):
                 match = True
             if record.birthday and keyword.lower() in record.birthday.value.lower():
                 match = True
@@ -131,34 +144,35 @@ class AddressBook(UserDict):
 
     def show_contacts(self):
         if self.data:
-            result = "All contacts:\n"
+            result = "\nAll contacts:\n"
             for contact in self.data.values():
                 result += f"{contact}\n"
             return result.strip()
         else:
             return "No contacts found."
 
-    def show_upcoming_birthdays(self, upcoming_days=7):
-        today = datetime.today()
-        next_period_end = today + timedelta(days=upcoming_days)
+    def show_upcoming_birthdays(self, days):
+        upcoming_birthday_list = []
+    
+        current_date = datetime.now().date()
+        
+        for contact in self.data.values():
+            # Calculate the upcoming birthday date for the current year
+            if not contact.birthday:
+                continue
+            upcoming_birthday = contact.birthday.value.replace(year=current_date.year)
 
-        upcoming_birthdays = []
-
-        for record_name, record in self.data.items():
-            if record.birthday:
-                if isinstance(record.birthday, Birthday):
-                    birthday_date = datetime.strptime(record.birthday.value, '%d.%m.%Y')
-                elif isinstance(record.birthday, str):
-                    birthday_date = datetime.strptime(record.birthday, '%d.%m.%Y')
-                else:
-                    print ("Unsupported birthday format")
-
-                # Ignore the year in the comparison
-                birthday_date = birthday_date.replace(year=today.year)
-
-                print(f"Comparing birthday for {record_name}: {birthday_date}, Today: {today}, Next period end: {next_period_end}")
-
-                if today <= birthday_date <= next_period_end:
-                    upcoming_birthdays.append(record_name)
-
-        return upcoming_birthdays
+            # If the upcoming birthday is within the specified number of days
+            if (upcoming_birthday - current_date).days < 0:
+                upcoming_birthday = contact.birthday.value.replace(year = current_date.year + 1)
+            if (upcoming_birthday - current_date).days <= days:
+                upcoming_birthday_list.append(contact)
+        
+        if upcoming_birthday_list:
+            print(f"Upcoming birthdays in the next {days} days:")
+            for contact in upcoming_birthday_list:
+                print(
+                    f"{contact.name.value}'s birthday is on {datetime.strftime(contact.birthday.value, "%d %B")}" #  - Phone: {contact.phone} - Email: {contact.email}
+                )
+        else:
+            print("No upcoming birthdays in the specified days.")
