@@ -3,6 +3,7 @@ from services.ContactService import ContactService
 from models.Note import Note, NoteBook
 from services.NoteService import NoteService
 from utils.ValidationUtils import ValidationUtils
+import json
 
 def show_menu():
     print(
@@ -24,14 +25,32 @@ def show_menu():
     )
     
 def main():
+    contacts_file = None
+    contacts = None
+
+    try:
+        contacts_file = open("contacts.json", "r")
+    except FileNotFoundError:
+        contacts_file = open("contacts.json", "w")
+        contacts_file.write("{}")
+        contacts_file.close()
+        contacts_file = open("contacts.json", "r")
+
+    contacts = json.load(contacts_file)
+    contacts_file.close()
+
+    def save_contacts(contacts):
+        with open("contacts.json", "w") as contacts_file:
+            json.dump(contacts, contacts_file, indent=4)
     
-    #contacts = load_contacts()
     show_menu()
     
     contact_book = AddressBook()
     contact_service = ContactService(contact_book)
     note_book = NoteBook()
     note_service = NoteService(note_book)
+
+    contact_service.fill_from_file(contacts)
     
     while True:
         choice = input("Enter your choice № of command or + to show all commands: ")
@@ -41,21 +60,24 @@ def main():
             while not name:
                 name = input("Name is mandatory\nEnter name: ").strip()
 
-            phones = input("Enter phones (comma-separated): ").strip().split(",")
-            while not ValidationUtils.validate_phone_list(phones):
-                phones = input("Enter phones (comma-separated, optional): ").strip().split(",")
+            phone = input("Enter the phone number (optional): ").strip()
+            while not ValidationUtils.validate_phone_number(phone):
+                phone = input("Enter the phone number (optional): ").strip()
             
-            email = input("Enter email (comma-separated, optional): ").strip()
+            email = input("Enter email (optional): ").strip()
             while not ValidationUtils.validate_email(email):
-                email = input("Enter email (comma-separated, optional): ").strip()
+                email = input("Enter email (optional): ").strip()
             
             address = input("Enter address (optional): ").strip()
             
             birthday = input("Enter birthday (DD.MM.YYYY, optional): ").strip()
+
             while not ValidationUtils.validate_birthday(birthday):
                 birthday = input("Enter birthday (DD.MM.YYYY, optional): ").strip()
             
-            contact_service.add_contact(name, address, phones, email, birthday)
+            contact_service.add_contact(name, address, phone, email, birthday)
+
+            save_contacts(contact_service.get_all_contacts())
 
         elif choice == "2" or choice.lower().startswith("find contact"): 
             value = input("Enter value: ").strip()
@@ -76,13 +98,13 @@ def main():
             while not new_name:
                 new_name = input("Name is mandatory\nEnter new name: ").strip()
             
-            new_phones = input("Enter new phones (comma-separated): ").strip().split(",")
-            while not ValidationUtils.validate_phone_list(new_phones):
-                new_phones = input("Enter new phones (comma-separated): ").strip().split(",")
+            new_phone_number = input("Enter new phone: ").strip()
+            while not ValidationUtils.validate_phone_number(new_phone_number):
+                new_phone_number = input("Enter new phone: ").strip()
             
             new_email = input("Enter new email: ").strip()
             while not ValidationUtils.validate_email(new_email):
-                new_email = input("Enter new email (comma-separated): ").strip()
+                new_email = input("Enter new email: ").strip()
             
             new_address = input("Enter new address: ").strip()
             
@@ -95,9 +117,8 @@ def main():
                 if old_contact:
                     if new_address:
                         old_contact.edit_address(new_address)
-                    if new_phones:
-                        for phone in new_phones:
-                            old_contact.add_phone(phone)
+                    if new_phone_number:
+                        old_contact.add_phone(new_phone_number)
                     if new_email:
                         old_contact.edit_email(new_email)
                     if new_birthday:
@@ -106,20 +127,24 @@ def main():
                 new_contact = Contact(new_name)
                 if new_address:
                     new_contact.add_address(new_address)
-                if new_phones:
-                    for phone in new_phones:
-                        new_contact.add_phone(phone)
+                if new_phone_number:
+                    new_contact.add_phone(new_phone_number)
                 if new_email:
                     new_contact.add_email(new_email)
                 if new_birthday:
                     new_contact.add_birthday(new_birthday)
 
             contact_service.edit_contact(old_name, new_contact)
+
+            save_contacts(contact_service.get_all_contacts())
             
         elif choice == "4" or choice.lower().startswith("delete contact"):
             name = input("Enter contact name to delete: ")
             contact_service.delete_contact(name)
+
             print(f"Contact {name} deleted.")
+
+            save_contacts(contact_service.get_all_contacts())
 
         elif choice == "5" or choice.lower().startswith("show contacts"):
             print(contact_service.show_contacts())
@@ -127,6 +152,7 @@ def main():
         elif choice == "6" or choice.lower().startswith("show upcoming birthdays"):
             days = int(input("Enter the number of days for upcoming birthdays: "))
             upcoming_birthdays = contact_service.show_upcoming_birthdays(days)
+
             if upcoming_birthdays:
                 print("Upcoming birthdays:")
                 for contact in upcoming_birthdays:
@@ -138,11 +164,13 @@ def main():
             note_name = input("Enter note name: ")
             note_text = input("Enter note text: ")
             note_service.add_note(note_name, note_text)
+
             print("Note added.")
 
         elif choice == "8" or choice.lower().startswith("search notes"):
             query = input("Enter search query for notes: ")
             results = note_service.search_notes(query)
+
             if results:
                 print("Search results for notes:")
                 for result in results:
@@ -155,11 +183,13 @@ def main():
             new_text = input("Enter new note text: ")
             new_note = Note(note_name, new_text)
             note_service.edit_note(note_name, new_note)
+
             print(f"Note '{note_name}' updated.")
 
         elif choice == "10" or choice.lower().startswith("delete note"):
             note_name = input("Enter the name of the note to delete: ")
             note_service.delete_note(note_name)
+
             print(f"Note '{note_name}' deleted.")
 
         elif choice == "11" or choice.lower().startswith("show notes"):

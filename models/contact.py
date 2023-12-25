@@ -28,67 +28,48 @@ class Contact:
     def __init__(self, name):
         self.name = Name(name)
         self.address = None
-        self.phones = []
-        self.emails = []
+        self.phone = None
+        self.email = None
         self.birthday = None
     
     def add_phone(self, phone):
-        if phone not in self.phones:
-             self.phones.append(Phone(phone))
-        else: print("Number already exists")
+        self.phone = Phone(phone)
 
     def edit_phone(self, old_phone_number, new_phone_number):
-        for index, phone in enumerate(self.phones):
-            if phone.value == old_phone_number:
-                self.phones[index] = Phone(new_phone_number)
-                break
-            else:
-                print("Old phone number not found")
+        self.phone = Phone(new_phone_number)
 
-    def remove_phone(self, phone):
-        if phone in self.phones:
-            self.phones.remove(phone)
+    def remove_phone(self):
+        self.phone = None
     
     def add_email(self, email):
-        if email not in self.emails:
-            self.emails.append(Email(email))
-        else:
-            print("Email already exists")
+        self.email = Email(email)
     
     def edit_email(self, email):
         self.email = Email(email)
 
-    def remove_email(self, email):
-        if email in self.emails:
-            self.emails.remove(email)
-    
+    def remove_email(self):
+        self.email = None
+
     def add_address(self, address):
-        if address is not None:
-            self.address = Address(address)
+        self.address = Address(address)
     
     def edit_address(self, address):
         self.address = Address(address)
 
-    def remove_address(self, address):
+    def remove_address(self):
         self.address = None
     
     def add_birthday(self, birthday):
-        if self.birthday is not None:
-            raise ValueError("Birthday already exists for this contact")
         self.birthday = Birthday(birthday)
 
     def edit_birthday(self, birthday):
         self.birthday = Birthday(birthday)
 
-    def remove_birthday(self, birthday):
+    def remove_birthday(self):
         self.birthday = None
 
     def __str__(self):
-        result = f"Contact name: {self.name.value}, phones: {'; '.join(str(p) for p in self.phones)}, emails: {'; '.join(str(e) for e in self.emails)}"
-        if self.address:
-            result += f", address: {self.address.value}"
-        if self.birthday:
-            result += f", birthday: {self.birthday}"
+        result = f"name: {self.name.value}, phone: {self.phone.value}, email: {self.email.value}, address: {self.address.value}, birthday: {self.birthday}"
         return result
     
 class AddressBook(UserDict):
@@ -96,25 +77,29 @@ class AddressBook(UserDict):
         if contact.name.value in self.data:
             print(f"Contact with name {contact.name.value} already exists in the address book")
             return
+
         self.data[contact.name.value] = contact
         print(f"Contact added: {contact.name.value}\n")
     
     def find_contact(self, keyword):
         results = []
+
         for record in self.data.values():
             match = False
+
             if record.name.value.lower() == keyword.lower():
                 match = True
-            if record.phones and any(phone.value.lower() == keyword.lower() for phone in record.phones):
+            if record.phone and record.phone.value.lower() == keyword.lower():
                 match = True
-            if record.address and keyword.lower() in record.address.value.lower():
+            if record.address and record.address.value.lower() == keyword.lower():
                 match = True
-            if record.emails and any(email.value.lower() == keyword.lower() for email in record.emails):
+            if record.email and record.email.value.lower() == keyword.lower():
                 match = True
-            if record.birthday and keyword.lower() in record.birthday.value.lower():
+            if record.birthday and record.birthday.value.lower() == keyword.lower():
                 match = True
             if match:
                 results.append(record)
+
         return results
 
     def delete_contact(self, name):
@@ -137,6 +122,12 @@ class AddressBook(UserDict):
             return result.strip()
         else:
             return "No contacts found."
+        
+    def setialized(self):
+        data = {}
+        for key, value in self.data.items():
+            data[key] = value.__str__()
+        return data
 
     def show_upcoming_birthdays(self, upcoming_days=7):
         today = datetime.today()
