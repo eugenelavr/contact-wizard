@@ -21,6 +21,7 @@ def show_menu():
      10. Delete Note
      11. Show Notes
      0. Exit
+     +. Show Menu
     """
     )
     
