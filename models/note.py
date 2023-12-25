@@ -1,31 +1,37 @@
 class Note:
-    def __init__(self, text):
+    def __init__(self, name, text):
+        self.name = name
         self.text = text
 
     def __str__(self):
-        return f"Note: {self.text}"
+        return f"Note '{self.name}': {self.text}"
 
 class NoteBook:
     def __init__(self):
         self.notes = []
 
     def add_note(self, note):
+        found_note = [n for n in self.notes if n.name == note.name]
+
+        if found_note:
+            found_note[0].text = note.text
+        
         self.notes.append(note)
 
-    def search_notes(self, query):
+    def search_notes(self, name):
         # Placeholder for search note. I assume crud to file logic. Rewrite below (just to test)
-        return [note for note in self.notes if query.lower() in note.text.lower()]
+        return [note for note in self.notes if name.lower() == note.name.lower()]
 
-    def edit_note(self, old_text, new_note):
+    def edit_note(self, note_name, new_note):
         # Placeholder for edit note. I assume crud to file logic. Rewrite below (just to test)
-        for note in self.notes:
-            if note.text == old_text:
-                note.text = new_note.text
-                break
+        found_note = [note for note in self.notes if note.name == note_name]
 
-    def delete_note(self, text):
+        if found_note:
+            found_note[0].text = new_note.text
+
+    def delete_note(self, note_name):
         # Placeholder for del note. I assume crud to file logic. Rewrite below (just to test)
-        self.notes = [note for note in self.notes if note.text != text]
+        self.notes = [note for note in self.notes if note.name != note_name]
 
     def show_notes(self):
         if self.notes:

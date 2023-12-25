@@ -3,19 +3,16 @@ from datetime import datetime
 
 class ValidationUtils:
     @staticmethod
-    def validate_phone_list(phone_list):
-        for i, phone in enumerate(phone_list):
-            if phone_list[i] == "":
-                print("User without phone.")
-                return True
-            # Remove spaces from each phone number
-            phone_list[i] = phone.replace(" ", "")
+    def validate_phone_number(phone_number):
+        if phone_number == "":
+            print("User without phone.")
+            return True
 
-            if not phone_list[i].isdigit() or len(phone_list[i]) != 10:
-              print(f"Invalid phone: {phone_list[i]}. Please enter a 10-digit number.")
-              return False
+        if not phone_number.isdigit() or len(phone_number) != 10:
+            print(f"Invalid phone: {phone_number}. Please enter a 10-digit number.")
+            return False
 
-        print("All phones are valid.")
+        print("Phone number is valid.")
         return True
 
     @staticmethod
