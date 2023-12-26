@@ -30,7 +30,7 @@ Follow the prompts in the interactive menu to perform various actions.
 Available Commands:
 ```
 "1" Add Contact
-"2" ind Contact
+"2" Find Contact
 "3" Edit Contact
 "4" Delete Contact
 "5" Show Contacts
